@@ -1,9 +1,101 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { getAuth, updateProfile } from 'firebase/auth';
+import { updateDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase.config';
+import { toast } from 'react-toastify';
+import arrowRight from '../assets/svg/keyboardArrowRightIcon.svg';
+import homeIcon from '../assets/svg/homeIcon.svg';
 
 function Profile() {
+  const auth = getAuth();
+  const navigate = useNavigate();
+  const [changeDetails, setChangeDetails] = useState(false);
+  const [formData, setFormData] = useState({
+    name: auth.currentUser.displayName,
+    email: auth.currentUser.email,
+  });
+
+  const { name, email } = formData;
+  // Logout when click the button
+  const onLogout = () => {
+    auth.signOut();
+    navigate('/');
+  };
+
+  //change user details eventHandler
+  const onSubmit = async () => {
+    try {
+      if (auth.currentUser.displayName !== name) {
+        // update display name in firebase
+        await updateProfile(auth.currentUser, {
+          displayName: name,
+        });
+
+        //update in firestore
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+        await updateDoc(userRef, {
+          name: name,
+        });
+      }
+    } catch (error) {
+      toast.error('Could not update user profile');
+    }
+  };
+
+  const onChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  };
   return (
-    <div>
-      <h1>Profile</h1>
+    <div className='profile'>
+      <header className='profile-header'>
+        <p className='pageHeader'>My profile</p>
+        <button type='button' onClick={onLogout} className='logOut'>
+          Logout
+        </button>
+      </header>
+      <main>
+        <div className='profileDetailHeader'>
+          <p className='profileDetailsText'>Personal Details</p>
+          <p
+            className='changePersonalDetails'
+            onClick={() => {
+              changeDetails && onSubmit();
+              setChangeDetails((prevState) => !prevState);
+            }}
+          >
+            {changeDetails ? 'done' : 'change'}
+          </p>
+        </div>
+        <div className='profileCard'>
+          <form>
+            <input
+              type='text'
+              id='name'
+              className={!changeDetails ? 'profileName' : 'profileNameActive'}
+              disabled={!changeDetails}
+              value={name}
+              onChange={onChange}
+            />
+            <input
+              type='text'
+              id='email'
+              className={!changeDetails ? 'profileEmail' : 'profileNameActive'}
+              disabled={!changeDetails}
+              value={email}
+              onChange={onChange}
+            />
+          </form>
+        </div>
+        <Link to='/create-listing' className='createListing'>
+          <img src={homeIcon} alt='home' />
+          <p>Sell or rent your home</p>
+          <img src={arrowRight} alt='arrow-right' />
+        </Link>
+      </main>
     </div>
   );
 }
