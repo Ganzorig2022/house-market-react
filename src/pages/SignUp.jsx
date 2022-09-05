@@ -1,74 +1,72 @@
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import {
   getAuth,
   createUserWithEmailAndPassword,
   updateProfile,
-} from 'firebase/auth';
-import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase.config';
-import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
-import visibilityIcon from '../assets/svg/visibilityIcon.svg';
+} from 'firebase/auth'
+import { setDoc, doc, serverTimestamp } from 'firebase/firestore'
+import { db } from '../firebase.config'
+import OAuth from '../components/OAuth'
+import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg'
+import visibilityIcon from '../assets/svg/visibilityIcon.svg'
 
 function SignUp() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-  });
-  const { name, email, password } = formData;
+  })
+  const { name, email, password } = formData
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  //===========1. Get email, password value from INPUT=============
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
-    }));
-  };
+    }))
+  }
 
-  //===========2. Send info to Firebase/Authentication===========
   const onSubmit = async (e) => {
-    e.preventDefault();
-    //register user to auth
+    e.preventDefault()
+
     try {
-      const auth = getAuth();
+      const auth = getAuth()
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
-      );
-      const uid = userCredential.user.uid;
+      )
 
-      //set user name
+      const user = userCredential.user
+
       updateProfile(auth.currentUser, {
         displayName: name,
-      });
+      })
 
-      //save user info to firestore database
-      const formDataCopy = { ...formData };
-      delete formDataCopy.password; //delete pass from user obj.
-      formDataCopy.timestamp = serverTimestamp(); //add timestamps
+      const formDataCopy = { ...formData }
+      delete formDataCopy.password
+      formDataCopy.timestamp = serverTimestamp()
 
-      // create new "users" collection with user-data-object
-      await setDoc(doc(db, 'users', uid), formDataCopy);
+      await setDoc(doc(db, 'users', user.uid), formDataCopy)
 
-      navigate('/');
+      navigate('/')
     } catch (error) {
-      toast.error('Something went wrong with registration!');
-      console.log(error.message);
+      toast.error('Something went wrong with registration')
     }
-  };
+  }
 
   return (
     <>
       <div className='pageContainer'>
         <header>
-          <p className='pageHeader'>Welcome back!</p>
+          <p className='pageHeader'>Welcome Back!</p>
         </header>
+
         <form onSubmit={onSubmit}>
           <input
             type='text'
@@ -81,11 +79,12 @@ function SignUp() {
           <input
             type='email'
             className='emailInput'
-            placeholder='email'
+            placeholder='Email'
             id='email'
             value={email}
             onChange={onChange}
           />
+
           <div className='passwordInputDiv'>
             <input
               type={showPassword ? 'text' : 'password'}
@@ -95,7 +94,7 @@ function SignUp() {
               value={password}
               onChange={onChange}
             />
-            {/* Show Password "EYE" icon */}
+
             <img
               src={visibilityIcon}
               alt='show password'
@@ -103,9 +102,11 @@ function SignUp() {
               onClick={() => setShowPassword((prevState) => !prevState)}
             />
           </div>
-          <Link to='forgot-password' className='forgotPasswordLink'>
+
+          <Link to='/forgot-password' className='forgotPasswordLink'>
             Forgot Password
           </Link>
+
           <div className='signUpBar'>
             <p className='signUpText'>Sign Up</p>
             <button className='signUpButton'>
@@ -113,15 +114,15 @@ function SignUp() {
             </button>
           </div>
         </form>
-        {/* Google OAuth */}
+
+        <OAuth />
 
         <Link to='/sign-in' className='registerLink'>
           Sign In Instead
         </Link>
       </div>
-      <h1>SignIn</h1>
     </>
-  );
+  )
 }
 
-export default SignUp;
+export default SignUp

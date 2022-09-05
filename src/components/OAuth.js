@@ -6,7 +6,7 @@ import { db } from '../firebase.config';
 import { toast } from 'react-toastify';
 import googleIcon from '../assets/svg/googleIcon.svg';
 
-export function OAuth() {
+export default function OAuth() {
   const navigate = useNavigate();
   const location = useLocation();
 

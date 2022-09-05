@@ -1,38 +1,38 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
-import { toast } from 'react-toastify';
-import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth'
+import { toast } from 'react-toastify'
+import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg'
 
 function ForgotPassword() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('')
 
-  const onChange = (e) => setEmail(e.target.value);
+  const onChange = (e) => setEmail(e.target.value)
 
   const onSubmit = async (e) => {
-    e.preventDefault();
-
+    e.preventDefault()
     try {
-      const auth = getAuth();
-
-      await sendPasswordResetEmail(auth, email);
-      toast.success('Email was sent');
+      const auth = getAuth()
+      await sendPasswordResetEmail(auth, email)
+      toast.success('Email was sent')
     } catch (error) {
-      toast.error('Could not send reset email');
+      toast.error('Could not send reset email')
     }
-  };
+  }
+
   return (
     <div className='pageContainer'>
       <header>
         <p className='pageHeader'>Forgot Password</p>
-      </header>{' '}
+      </header>
+
       <main>
         <form onSubmit={onSubmit}>
           <input
             type='email'
-            id='email'
             className='emailInput'
             placeholder='Email'
+            id='email'
             value={email}
             onChange={onChange}
           />
@@ -49,7 +49,7 @@ function ForgotPassword() {
         </form>
       </main>
     </div>
-  );
+  )
 }
 
-export default ForgotPassword;
+export default ForgotPassword

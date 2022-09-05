@@ -1,62 +1,65 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { OAuth } from '../components/OAuth';
-import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
-import visibilityIcon from '../assets/svg/visibilityIcon.svg';
+import { useState } from 'react'
+import { toast } from 'react-toastify'
+import { Link, useNavigate } from 'react-router-dom'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import OAuth from '../components/OAuth'
+import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg'
+import visibilityIcon from '../assets/svg/visibilityIcon.svg'
 
 function SignIn() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-  });
-  const { email, password } = formData;
+  })
+  const { email, password } = formData
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
-    }));
-  };
+    }))
+  }
+
   const onSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
-      const auth = getAuth();
+      const auth = getAuth()
 
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
-      );
+      )
 
       if (userCredential.user) {
-        alert('Sign In is successful');
-        navigate('/');
+        navigate('/')
       }
     } catch (error) {
-      toast.error('Bad user Credentials');
+      toast.error('Bad User Credentials')
     }
-  };
+  }
+
   return (
     <>
       <div className='pageContainer'>
         <header>
-          <p className='pageHeader'>Welcome back!</p>
+          <p className='pageHeader'>Welcome Back!</p>
         </header>
+
         <form onSubmit={onSubmit}>
           <input
             type='email'
             className='emailInput'
-            placeholder='email'
+            placeholder='Email'
             id='email'
             value={email}
             onChange={onChange}
           />
+
           <div className='passwordInputDiv'>
             <input
               type={showPassword ? 'text' : 'password'}
@@ -66,7 +69,7 @@ function SignIn() {
               value={password}
               onChange={onChange}
             />
-            {/* Show Password "EYE" icon */}
+
             <img
               src={visibilityIcon}
               alt='show password'
@@ -74,9 +77,11 @@ function SignIn() {
               onClick={() => setShowPassword((prevState) => !prevState)}
             />
           </div>
-          <Link to='forgot-password' className='forgotPasswordLink'>
+
+          <Link to='/forgot-password' className='forgotPasswordLink'>
             Forgot Password
           </Link>
+
           <div className='signInBar'>
             <p className='signInText'>Sign In</p>
             <button className='signInButton'>
@@ -84,16 +89,15 @@ function SignIn() {
             </button>
           </div>
         </form>
-        {/* Google OAuth */}
+
         <OAuth />
 
         <Link to='/sign-up' className='registerLink'>
-          SIgn Up Instead
+          Sign Up Instead
         </Link>
       </div>
-      <h1>SignIn</h1>
     </>
-  );
+  )
 }
 
-export default SignIn;
+export default SignIn

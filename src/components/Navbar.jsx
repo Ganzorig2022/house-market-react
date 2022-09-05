@@ -1,16 +1,17 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'
+import { ReactComponent as OfferIcon } from '../assets/svg/localOfferIcon.svg'
+import { ReactComponent as ExploreIcon } from '../assets/svg/exploreIcon.svg'
+import { ReactComponent as PersonOutlineIcon } from '../assets/svg/personOutlineIcon.svg'
 
-import { ReactComponent as OfferIcon } from '../assets/svg/localOfferIcon.svg';
-import { ReactComponent as ExploreIcon } from '../assets/svg/exploreIcon.svg';
-import { ReactComponent as PersonOutlineIcon } from '../assets/svg/personOutlineIcon.svg';
-
-const Navbar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+function Navbar() {
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const pathMatchRoute = (route) => {
-    if (route == location.pathname) return true;
-  };
+    if (route === location.pathname) {
+      return true
+    }
+  }
 
   return (
     <footer className='navbar'>
@@ -32,9 +33,9 @@ const Navbar = () => {
               Explore
             </p>
           </li>
-          <li className='navbarListItem' onClick={() => navigate('/offer')}>
+          <li className='navbarListItem' onClick={() => navigate('/offers')}>
             <OfferIcon
-              fill={pathMatchRoute('/offer') ? '#2c2c2c' : '#8f8f8f'}
+              fill={pathMatchRoute('/offers') ? '#2c2c2c' : '#8f8f8f'}
               width='36px'
               height='36px'
             />
@@ -45,7 +46,7 @@ const Navbar = () => {
                   : 'navbarListItemName'
               }
             >
-              Offer
+              Offers
             </p>
           </li>
           <li className='navbarListItem' onClick={() => navigate('/profile')}>
@@ -67,7 +68,7 @@ const Navbar = () => {
         </ul>
       </nav>
     </footer>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
